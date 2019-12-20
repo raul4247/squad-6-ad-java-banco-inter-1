@@ -1,6 +1,10 @@
 package br.com.codenation.aceleradev.service.impl;
 
+import br.com.codenation.aceleradev.chain.impl.ErrorFilterTituloImpl;
 import br.com.codenation.aceleradev.comum.AmbienteEnum;
+import br.com.codenation.aceleradev.comum.StatusEnum;
+import br.com.codenation.aceleradev.dto.ErroDTO;
+import br.com.codenation.aceleradev.dto.ErroFilterDTO;
 import br.com.codenation.aceleradev.comum.LevelEnum;
 import br.com.codenation.aceleradev.domain.Erro;
 import br.com.codenation.aceleradev.exception.ResourceNotFoundException;
@@ -14,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ErroServiceImpl implements ErroService {
 
-    private static ErroRepository repository;
+    private final ErroRepository repository;
 
     @Autowired
     public ErroServiceImpl(ErroRepository repository) {
@@ -42,8 +46,8 @@ public class ErroServiceImpl implements ErroService {
     }
 
     @Override
-    public Page<Erro> findAll(Pageable pageable){
-        return repository.findAll(pageable);
+    public Page<ErroDTO> findAllErroDTO(Pageable pageable, StatusEnum status){
+        return repository.findAllErroDTO(pageable, status);
     }
 
     @Override
@@ -62,8 +66,8 @@ public class ErroServiceImpl implements ErroService {
     }
 
     @Override
-    public Page<Erro> findByAmbiente(Pageable pageable, AmbienteEnum ambiente) {
-        return repository.findByAmbiente(pageable, ambiente);
+    public Page<Erro> findByAmbiente(Pageable pageable, AmbienteEnum ambiente, StatusEnum status) {
+        return repository.findByAmbiente(pageable, ambiente, status);
     }
 
     @Override
@@ -79,5 +83,16 @@ public class ErroServiceImpl implements ErroService {
     @Override
     public Page<Erro> findByAmbienteAndUsuarioId(Pageable pageable, AmbienteEnum ambiente, Long usuarioId) {
         return repository.findByAmbienteAndUsuarioId(pageable, ambiente, usuarioId);
+    }
+
+    @Override
+    public Page<Erro> findPaged(Pageable pageable, AmbienteEnum ambiente, StatusEnum status, ErroFilterDTO erroFilter) {
+        return new ErrorFilterTituloImpl().filtra(this, pageable, ambiente, status, erroFilter);
+    }
+
+
+    @Override
+    public Long countDistinctByAmbienteAndLevelAndTitulo(AmbienteEnum ambiente, LevelEnum level, String titulo) {
+        return repository.countDistinctByAmbienteAndLevelAndTitulo(ambiente, level, titulo).orElse(0L);
     }
 }

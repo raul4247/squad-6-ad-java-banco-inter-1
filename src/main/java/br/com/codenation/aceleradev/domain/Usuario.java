@@ -1,10 +1,9 @@
 package br.com.codenation.aceleradev.domain;
 
+import br.com.codenation.aceleradev.comum.RoleEnum;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
@@ -16,6 +15,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @Builder
+@ToString
 public class Usuario extends BaseEntity {
 
     @Column(name = "nome", length = 150, nullable = false)
@@ -32,4 +32,8 @@ public class Usuario extends BaseEntity {
     @Column(name="email", length = 150)
     @Email
     private String email;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "role", nullable = false)
+    private RoleEnum role;
 }
